@@ -1,0 +1,14 @@
+{
+  "endpoint" : "172.17.0.4",
+  "port": 9000,
+  "access_key" : "JAHX7LAUXB7N6S208HCB",
+  "secret_key" : "EuaJ2LZU0bdCztvSrGtUU4uN3DhgzMeXNOO2V2CH",
+  "secure" : false,
+  "data_bucket_name" : "fleet-data",
+  "data_object_name" : "fleet.test-data.csv",
+  "data_file_delimiter" : ",",
+  "model_bucket_name" : "fleet-model",
+  "model_object_name_prefix" : "e4af3fad-183d-4c32-b3c0-10d2591e694a",
+  "output_bucket_name" : "fleet-output",
+  "output_file_delimiter" : ","
+}

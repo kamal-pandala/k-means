@@ -1,0 +1,10 @@
+
+km-parallel/\.idea/
+
+km-parallel/train-flow/\.idea/
+
+km-parallel/train-flow/src/main/java/com/example/fn/ParamsChecker\.java
+
+km-parallel/train-flow/target/
+
+*.iml
