@@ -13,6 +13,9 @@ public class TrainParams implements Serializable {
     @JsonProperty("endpoint")
     private String endpoint;
 
+    @JsonProperty("port")
+    private int port = 0;
+
     @JsonProperty("access_key")
     private String accessKey;
 
@@ -31,14 +34,17 @@ public class TrainParams implements Serializable {
     @JsonProperty("data_object_name")
     private String dataObjectName;
 
+    @JsonProperty("data_object_prefix_name")
+    private String dataObjectPrefixName;
+
     @JsonProperty("data_file_delimiter")
     private String dataFileDelimiter = ",";
 
-    @JsonProperty("model_bucket_name")
-    private String modelBucketName;
+    @JsonProperty("model_object_bucket_name")
+    private String modelObjectBucketName;
 
-    @JsonProperty("model_object_name_prefix")
-    private String modelObjectNamePrefix;
+    @JsonProperty("model_object_prefix_name")
+    private String modelObjectPrefixName;
 
     @JsonProperty("estimator_params")
     private EstimatorParams estimatorParams;
@@ -61,6 +67,16 @@ public class TrainParams implements Serializable {
     @JsonProperty("endpoint")
     public void setEndpoint(String endpoint) {
         this.endpoint = endpoint;
+    }
+
+    @JsonProperty("port")
+    public int getPort() {
+        return port;
+    }
+
+    @JsonProperty("port")
+    public void setPort(int port) {
+        this.port = port;
     }
 
     @JsonProperty("access_key")
@@ -123,6 +139,16 @@ public class TrainParams implements Serializable {
         this.dataObjectName = dataObjectName;
     }
 
+    @JsonProperty("data_object_prefix_name")
+    public String getDataObjectPrefixName() {
+        return dataObjectPrefixName;
+    }
+
+    @JsonProperty("data_object_prefix_name")
+    public void setDataObjectPrefixName(String dataObjectPrefixName) {
+        this.dataObjectPrefixName = dataObjectPrefixName;
+    }
+
     @JsonProperty("data_file_delimiter")
     public String getDataFileDelimiter() {
         return dataFileDelimiter;
@@ -133,24 +159,24 @@ public class TrainParams implements Serializable {
         this.dataFileDelimiter = dataFileDelimiter;
     }
 
-    @JsonProperty("model_bucket_name")
-    public String getModelBucketName() {
-        return modelBucketName;
+    @JsonProperty("model_object_bucket_name")
+    public String getModelObjectBucketName() {
+        return modelObjectBucketName;
     }
 
-    @JsonProperty("model_bucket_name")
-    public void setModelBucketName(String modelBucketName) {
-        this.modelBucketName = modelBucketName;
+    @JsonProperty("model_object_bucket_name")
+    public void setModelObjectBucketName(String modelObjectBucketName) {
+        this.modelObjectBucketName = modelObjectBucketName;
     }
 
-    @JsonProperty("model_object_name_prefix")
-    public String getModelObjectNamePrefix() {
-        return modelObjectNamePrefix;
+    @JsonProperty("model_object_prefix_name")
+    public String getModelObjectPrefixName() {
+        return modelObjectPrefixName;
     }
 
-    @JsonProperty("model_object_name_prefix")
-    public void setModelObjectNamePrefix(String modelObjectNamePrefix) {
-        this.modelObjectNamePrefix = modelObjectNamePrefix;
+    @JsonProperty("model_object_prefix_name")
+    public void setModelObjectPrefixName(String modelObjectPrefixName) {
+        this.modelObjectPrefixName = modelObjectPrefixName;
     }
 
     @JsonProperty("estimator_params")

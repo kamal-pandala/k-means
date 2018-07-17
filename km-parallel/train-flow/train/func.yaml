@@ -1,5 +1,5 @@
 name: train
-version: 0.0.7
+version: 0.0.9
 runtime: python
 entrypoint: python3 func.py
 memory: 8192

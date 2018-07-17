@@ -13,15 +13,19 @@ def handler(ctx, data=None, loop=None):
         # TODO - validation and exception handling
         # Parameters required for initialising minio client
         endpoint = body.get('endpoint')
+        port = body.get('port')
+        if port is not None and port != 0:
+            endpoint += ':' + str(port)
+
         access_key = body.get('access_key')
         secret_key = body.get('secret_key')
         secure = body.get('secure')
         region = body.get('region')
 
         # Parameters for the output model file
-        model_bucket_name = body.get('model_bucket_name')
-        model_object_name_prefix = body.get('model_object_name_prefix')
-        model_object_name = model_object_name_prefix + '/final_model.pkl'
+        model_object_bucket_name = body.get('model_object_bucket_name')
+        model_object_prefix_name = body.get('model_object_prefix_name')
+        model_object_name = model_object_prefix_name + '/final_model.pkl'
 
         # Establishing connection to remote storage
         minio_client = minio_init_client(endpoint, access_key=access_key, secret_key=secret_key,
@@ -40,7 +44,7 @@ def handler(ctx, data=None, loop=None):
                     logger.info('Unable to delete files in the model directory!')
 
         # Downloading all the model files
-        minio_get_all_objects(minio_client, model_bucket_name, model_object_name_prefix, 'model', logger)
+        minio_get_all_objects(minio_client, model_object_bucket_name, model_object_prefix_name, 'model', logger)
 
         intermediate_models_inertias = {}
         for the_file in os.listdir('model'):
@@ -57,8 +61,8 @@ def handler(ctx, data=None, loop=None):
 
         # TODO cleanup of other model files required
         # Uploading the model into remote storage
-        minio_put_object(minio_client, model_bucket_name,  model_object_name, final_model_file_path, logger)
-        logger.info('Uploaded file to bucket: {0} with object name: {1}!'.format(model_bucket_name, model_object_name))
+        minio_put_object(minio_client, model_object_bucket_name,  model_object_name, final_model_file_path, logger)
+        logger.info('Uploaded file to bucket: {0} with object name: {1}!'.format(model_object_bucket_name, model_object_name))
 
         return {"message": "Completed successfully!!!"}
     else:

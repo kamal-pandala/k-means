@@ -20,13 +20,13 @@ public class TrainFlow {
     private static final int FUNCTION_LIMIT = 32;
     private static final int N_CORES_PER_FUNCTION = 1;
 
-    public void handleRequest(TrainParams trainParams) {
+    public String handleRequest(TrainParams trainParams) {
         System.out.println("Within the handle request method!");
         log.debug("Within the handle request method!");
 
         // Setting unique prefix for uploading model files
-        String modelObjectNamePrefix = UUID.randomUUID().toString();
-        trainParams.setModelObjectNamePrefix(modelObjectNamePrefix);
+        String modelObjectPrefixName = UUID.randomUUID().toString();
+        trainParams.setModelObjectPrefixName(modelObjectPrefixName);
 
         // Configuring no. of required functions and trees per function
         int nIterationsRequired = trainParams.getEstimatorParams().getnInit();
@@ -66,18 +66,19 @@ public class TrainFlow {
 
                         AggregateParams aggregateParams = new AggregateParams();
                         aggregateParams.setEndpoint(trainParams.getEndpoint());
+                        aggregateParams.setPort(trainParams.getPort());
                         aggregateParams.setAccessKey(trainParams.getAccessKey());
                         aggregateParams.setSecretKey(trainParams.getSecretKey());
                         aggregateParams.setSecure(trainParams.getSecure());
                         aggregateParams.setRegion(trainParams.getRegion());
-                        aggregateParams.setModelBucketName(trainParams.getModelBucketName());
-                        aggregateParams.setModelObjectNamePrefix(modelObjectNamePrefix);
+                        aggregateParams.setModelObjectBucketName(trainParams.getModelObjectBucketName());
+                        aggregateParams.setModelObjectPrefixName(modelObjectPrefixName);
 
                         currentFlow().invokeFunction("km-parallel/train-flow/aggregate",
                                 aggregateParams);
                     }
                 });
-
+        return modelObjectPrefixName;
     }
 
 }

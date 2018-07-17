@@ -1,12 +1,13 @@
 {
-    "endpoint": "172.17.0.4:9000",
+    "endpoint": "172.17.0.4",
+    "port": 9000,
     "access_key": "JAHX7LAUXB7N6S208HCB",
     "secret_key": "EuaJ2LZU0bdCztvSrGtUU4uN3DhgzMeXNOO2V2CH",
     "secure": false,
     "data_bucket_name": "fleet-data",
     "data_object_name": "fleet.train-data.csv",
     "data_file_delimiter": ",",
-    "model_bucket_name": "fleet-model",
+    "model_object_bucket_name": "fleet-model",
     "estimator_params": {
         "n_clusters": 4,
         "n_init": 1024,
