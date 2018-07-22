@@ -8,3 +8,5 @@ km-parallel/train-flow/src/main/java/com/example/fn/ParamsChecker\.java
 km-parallel/train-flow/target/
 
 *.iml
+
+km-parallel/predict-flow/\.idea/

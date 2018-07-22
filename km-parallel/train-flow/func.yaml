@@ -1,5 +1,5 @@
 name: train-flow
-version: 0.0.11
+version: 0.0.12
 runtime: java
 cmd: com.example.fn.TrainFlow::handleRequest
 build_image: fnproject/fn-java-fdk-build:jdk9-1.0.63
