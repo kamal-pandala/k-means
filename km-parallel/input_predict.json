@@ -7,8 +7,8 @@
   "data_bucket_name" : "fleet-data",
   "data_object_name" : "fleet.test-data.csv",
   "data_file_delimiter" : ",",
-  "model_bucket_name" : "fleet-model",
-  "model_object_name_prefix" : "e4af3fad-183d-4c32-b3c0-10d2591e694a",
+  "model_object_bucket_name" : "fleet-model",
+  "model_object_prefix_name" : "e4af3fad-183d-4c32-b3c0-10d2591e694a",
   "output_bucket_name" : "fleet-output",
   "output_file_delimiter" : ","
 }

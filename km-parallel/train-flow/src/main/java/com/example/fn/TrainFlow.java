@@ -20,7 +20,7 @@ public class TrainFlow {
     private static final int FUNCTION_LIMIT = 32;
     private static final int N_CORES_PER_FUNCTION = 1;
 
-    public String handleRequest(TrainParams trainParams) {
+    public TrainResponse handleRequest(TrainParams trainParams) {
         System.out.println("Within the handle request method!");
         log.debug("Within the handle request method!");
 
@@ -28,7 +28,7 @@ public class TrainFlow {
         String modelObjectPrefixName = UUID.randomUUID().toString();
         trainParams.setModelObjectPrefixName(modelObjectPrefixName);
 
-        // Configuring no. of required functions and trees per function
+        // Configuring number of required functions and jobs per function
         int nIterationsRequired = trainParams.getEstimatorParams().getnInit();
         int nIterationsPerFunction = 1;
         int nFunctionsRequired = nIterationsRequired;
@@ -42,7 +42,7 @@ public class TrainFlow {
         // Setting no. of cores per function
         trainParams.getEstimatorParams().setnJobs(N_CORES_PER_FUNCTION);
 
-        // Creating clones of input params with fn_num as ID
+        // Invoking training jobs and storing references to their futures
         ArrayList<FlowFuture<HttpResponse>> trainParamsList = new ArrayList<>();
         for(int i = 0; i < nFunctionsRequired; i++) {
             trainParams.setFnNum(i);
@@ -57,28 +57,37 @@ public class TrainFlow {
                     trainParams));
         }
 
-        currentFlow().allOf(trainParamsList.toArray(new FlowFuture[nFunctionsRequired]))
-                .whenComplete((v, throwable) -> {
-                    if (throwable != null) {
-                        log.error("Failed!");
-                    } else {
-                        log.info("Success!");
+        FlowFuture<HttpResponse> aggregateFlow = currentFlow().allOf(trainParamsList.toArray(new FlowFuture[nFunctionsRequired]))
+                .thenCompose((v) -> {
+                    // TODO - Failure logic
 
-                        AggregateParams aggregateParams = new AggregateParams();
-                        aggregateParams.setEndpoint(trainParams.getEndpoint());
-                        aggregateParams.setPort(trainParams.getPort());
-                        aggregateParams.setAccessKey(trainParams.getAccessKey());
-                        aggregateParams.setSecretKey(trainParams.getSecretKey());
-                        aggregateParams.setSecure(trainParams.getSecure());
-                        aggregateParams.setRegion(trainParams.getRegion());
-                        aggregateParams.setModelObjectBucketName(trainParams.getModelObjectBucketName());
-                        aggregateParams.setModelObjectPrefixName(modelObjectPrefixName);
+                    AggregateParams aggregateParams = new AggregateParams();
+                    aggregateParams.setEndpoint(trainParams.getEndpoint());
+                    aggregateParams.setPort(trainParams.getPort());
+                    aggregateParams.setAccessKey(trainParams.getAccessKey());
+                    aggregateParams.setSecretKey(trainParams.getSecretKey());
+                    aggregateParams.setSecure(trainParams.getSecure());
+                    aggregateParams.setRegion(trainParams.getRegion());
+                    aggregateParams.setModelObjectBucketName(trainParams.getModelObjectBucketName());
+                    aggregateParams.setModelObjectPrefixName(modelObjectPrefixName);
 
-                        currentFlow().invokeFunction("km-parallel/train-flow/aggregate",
-                                aggregateParams);
-                    }
+                    return currentFlow().invokeFunction("km-parallel/train-flow/aggregate",
+                            aggregateParams);
                 });
-        return modelObjectPrefixName;
+
+        FlowFuture<TrainResponse> trainFuture = aggregateFlow.thenCompose((v) -> {
+            // TODO - Failure logic
+
+            TrainResponse trainResponse = new TrainResponse();
+            trainResponse.setTrainSucess(true);
+            trainResponse.setModelObjectBucketName(trainParams.getModelObjectBucketName());
+            trainResponse.setModelObjectPrefixName(modelObjectPrefixName);
+            trainResponse.setModelObjectName("final_model.pkl");
+
+            return currentFlow().completedValue(trainResponse);
+        });
+
+        return trainFuture.get();
     }
 
 }

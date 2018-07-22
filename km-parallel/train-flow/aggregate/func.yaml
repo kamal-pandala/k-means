@@ -1,5 +1,5 @@
 name: aggregate
-version: 0.0.9
+version: 0.0.11
 runtime: python
 entrypoint: python3 func.py
 memory: 8192

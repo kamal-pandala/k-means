@@ -39,6 +39,7 @@ def handler(ctx, data=None, loop=None):
         model_object_prefix_name = body.get('model_object_prefix_name')
         model_object_name = model_object_prefix_name + '/model_' + str(fn_num) + '.pkl'
 
+        # Parameters for the K-Means algorithm of scikit-learn
         estimator_params = body.get('estimator_params')
 
         # Establishing connection to remote storage
@@ -46,17 +47,18 @@ def handler(ctx, data=None, loop=None):
                                          secure=secure, region=region)
 
         # Creating directories in function's local storage
+        # Downloading input training dataset from remote storage
         if not os.path.exists('data'):
             os.mkdir('data')
-            # Downloading input training dataset from remote storage
             minio_get_object(minio_client, data_bucket_name, data_object_name, 'data/train_data.csv', logger)
             logger.info('Downloaded file!')
         else:
-            # Downloading input training dataset from remote storage
             if not os.path.exists('data/train_data.csv'):
                 minio_get_object(minio_client, data_bucket_name, data_object_name, 'data/train_data.csv', logger)
                 logger.info('Downloaded file!')
 
+        # TODO - Delete folders as well
+        # Cleaning up any existing model files and directories
         if not os.path.exists('model'):
             os.mkdir('model')
         else:
@@ -72,7 +74,7 @@ def handler(ctx, data=None, loop=None):
         train_data = np.array(pd.read_csv('data/train_data.csv', sep=data_file_delimiter, header=None))
         logger.info('Loaded file!')
 
-        # Initialisation of the Random Forest algorithm with the estimator_params
+        # Initialisation of the K-Means algorithm with the estimator parameters
         if estimator_params is not None:
             km = KMeans(**estimator_params)
         else:
@@ -90,6 +92,7 @@ def handler(ctx, data=None, loop=None):
         minio_put_object(minio_client, model_object_bucket_name,  model_object_name, 'model/model.pkl', logger)
         logger.info('Uploaded file to bucket: {0} with object name: {1}!'.format(model_object_bucket_name, model_object_name))
 
+        # TODO - Return codes
         return {"message": "Completed successfully!!!"}
     else:
         return {"message": "Data not sent!"}

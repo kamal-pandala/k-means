@@ -46,6 +46,8 @@ def handler(ctx, data=None, loop=None):
         # Downloading all the model files
         minio_get_all_objects(minio_client, model_object_bucket_name, model_object_prefix_name, 'model', logger)
 
+        # Loading the models into memory and storing them as a dict referenced
+        # by their file path with inertia as their values
         intermediate_models_inertias = {}
         for the_file in os.listdir('model'):
             file_path = os.path.join('model', the_file)
@@ -56,10 +58,10 @@ def handler(ctx, data=None, loop=None):
             except Exception as e:
                 logger.info('Unable to read files in the output directory!')
 
+        # Finding the model with the least inertia
         final_model_file_path = min(intermediate_models_inertias, key=intermediate_models_inertias.get)
-        logger.info(final_model_file_path)
 
-        # TODO cleanup of other model files required
+        # TODO cleanup of other model files in remote storage required
         # Uploading the model into remote storage
         minio_put_object(minio_client, model_object_bucket_name,  model_object_name, final_model_file_path, logger)
         logger.info('Uploaded file to bucket: {0} with object name: {1}!'.format(model_object_bucket_name, model_object_name))
