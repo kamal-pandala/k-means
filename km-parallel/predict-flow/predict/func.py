@@ -50,22 +50,25 @@ def handler(ctx, data=None, loop=None):
 
         # Creating directories in function's local storage
         # Downloading input prediction dataset from remote storage
-        if not os.path.exists('data'):
-            os.mkdir('data')
-            minio_get_object(minio_client, data_bucket_name, data_object_name, 'data/test_data.csv', logger)
+        if not os.path.exists('/tmp'):
+            os.mkdir('/tmp')
+
+        if not os.path.exists('/tmp/data'):
+            os.mkdir('/tmp/data')
+            minio_get_object(minio_client, data_bucket_name, data_object_name, '/tmp/data/test_data.csv', logger)
             logger.info('Downloaded file!')
         else:
-            if not os.path.exists('data/test_data.csv'):
-                minio_get_object(minio_client, data_bucket_name, data_object_name, 'data/test_data.csv', logger)
+            if not os.path.exists('/tmp/data/test_data.csv'):
+                minio_get_object(minio_client, data_bucket_name, data_object_name, '/tmp/data/test_data.csv', logger)
                 logger.info('Downloaded file!')
 
         # TODO - Delete folders as well
         # Cleaning up any existing model files and directories
-        if not os.path.exists('model'):
-            os.mkdir('model')
+        if not os.path.exists('/tmp/model'):
+            os.mkdir('/tmp/model')
         else:
-            for the_file in os.listdir('model'):
-                file_path = os.path.join('model', the_file)
+            for the_file in os.listdir('/tmp/model'):
+                file_path = os.path.join('/tmp/model', the_file)
                 try:
                     if os.path.isfile(file_path):
                         os.unlink(file_path)
@@ -73,15 +76,15 @@ def handler(ctx, data=None, loop=None):
                     logger.info('Unable to delete files in the model directory!')
 
         # Downloading the model file
-        minio_get_object(minio_client, model_object_bucket_name, model_object_name, 'model/model.pkl', logger)
+        minio_get_object(minio_client, model_object_bucket_name, model_object_name, '/tmp/model/model.pkl', logger)
         logger.info('Downloaded model!')
 
         # Cleaning up any existing output files and directories
-        if not os.path.exists('output'):
-            os.mkdir('output')
+        if not os.path.exists('/tmp/output'):
+            os.mkdir('/tmp/output')
         else:
-            for the_file in os.listdir('output'):
-                file_path = os.path.join('output', the_file)
+            for the_file in os.listdir('/tmp/output'):
+                file_path = os.path.join('/tmp/output', the_file)
                 try:
                     if os.path.isfile(file_path):
                         os.unlink(file_path)
@@ -89,20 +92,20 @@ def handler(ctx, data=None, loop=None):
                     logger.info('Unable to delete files in the output directory!')
 
         # Loading the input prediction dataset into memory
-        test_data = pd.read_csv('data/test_data.csv', sep=data_file_delimiter, header=None)
+        test_data = pd.read_csv('/tmp/data/test_data.csv', sep=data_file_delimiter, header=None)
         test_X = np.array(test_data)
         logger.info('Loaded data!')
 
         # Loading the model into memory
-        km = joblib.load('model/model.pkl')
+        km = joblib.load('/tmp/model/model.pkl')
 
         # Predicting and persisting the predictions locally
         predictions = km.predict(test_X)
-        np.savetxt('output/predictions.csv', predictions, delimiter=output_file_delimiter)
+        np.savetxt('/tmp/output/predictions.csv', predictions, delimiter=output_file_delimiter)
         logger.info('Finished predictions!')
 
         # Uploading the prediction file into remote storage
-        minio_put_object(minio_client, output_bucket_name, output_object_name, 'output/predictions.csv', logger)
+        minio_put_object(minio_client, output_bucket_name, output_object_name, '/tmp/output/predictions.csv', logger)
         logger.info('Uploaded file to bucket: {0} with object name: {1}!'
                     .format(output_bucket_name, output_object_name))
 

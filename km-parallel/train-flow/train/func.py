@@ -48,22 +48,25 @@ def handler(ctx, data=None, loop=None):
 
         # Creating directories in function's local storage
         # Downloading input training dataset from remote storage
-        if not os.path.exists('data'):
-            os.mkdir('data')
-            minio_get_object(minio_client, data_bucket_name, data_object_name, 'data/train_data.csv', logger)
+        if not os.path.exists('/tmp'):
+            os.mkdir('/tmp')
+
+        if not os.path.exists('/tmp/data'):
+            os.mkdir('/tmp/data')
+            minio_get_object(minio_client, data_bucket_name, data_object_name, '/tmp/data/train_data.csv', logger)
             logger.info('Downloaded file!')
         else:
-            if not os.path.exists('data/train_data.csv'):
-                minio_get_object(minio_client, data_bucket_name, data_object_name, 'data/train_data.csv', logger)
+            if not os.path.exists('/tmp/data/train_data.csv'):
+                minio_get_object(minio_client, data_bucket_name, data_object_name, '/tmp/data/train_data.csv', logger)
                 logger.info('Downloaded file!')
 
         # TODO - Delete folders as well
         # Cleaning up any existing model files and directories
-        if not os.path.exists('model'):
-            os.mkdir('model')
+        if not os.path.exists('/tmp/model'):
+            os.mkdir('/tmp/model')
         else:
-            for the_file in os.listdir('model'):
-                file_path = os.path.join('model', the_file)
+            for the_file in os.listdir('/tmp/model'):
+                file_path = os.path.join('/tmp/model', the_file)
                 try:
                     if os.path.isfile(file_path):
                         os.unlink(file_path)
@@ -71,7 +74,7 @@ def handler(ctx, data=None, loop=None):
                     logger.info('Unable to delete files in the model directory!')
 
         # Loading the input training dataset into memory
-        train_data = np.array(pd.read_csv('data/train_data.csv', sep=data_file_delimiter, header=None))
+        train_data = np.array(pd.read_csv('/tmp/data/train_data.csv', sep=data_file_delimiter, header=None))
         logger.info('Loaded file!')
 
         # Initialisation of the K-Means algorithm with the estimator parameters
@@ -85,11 +88,11 @@ def handler(ctx, data=None, loop=None):
         logger.info('Finished training!')
 
         # Persisting the model into function's local storage
-        joblib.dump(km, 'model/model.pkl')
+        joblib.dump(km, '/tmp/model/model.pkl')
         logger.info('Dumped model!')
 
         # Uploading the model into remote storage
-        minio_put_object(minio_client, model_object_bucket_name,  model_object_name, 'model/model.pkl', logger)
+        minio_put_object(minio_client, model_object_bucket_name,  model_object_name, '/tmp/model/model.pkl', logger)
         logger.info('Uploaded file to bucket: {0} with object name: {1}!'.format(model_object_bucket_name, model_object_name))
 
         # TODO - Return codes

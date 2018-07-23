@@ -32,11 +32,14 @@ def handler(ctx, data=None, loop=None):
                                          secure=secure, region=region)
 
         # Creating directories in function's local storage
-        if not os.path.exists('model'):
-            os.mkdir('model')
+        if not os.path.exists('/tmp'):
+            os.mkdir('/tmp')
+
+        if not os.path.exists('/tmp/model'):
+            os.mkdir('/tmp/model')
         else:
-            for the_file in os.listdir('model'):
-                file_path = os.path.join('model', the_file)
+            for the_file in os.listdir('/tmp/model'):
+                file_path = os.path.join('/tmp/model', the_file)
                 try:
                     if os.path.isfile(file_path):
                         os.unlink(file_path)
@@ -44,13 +47,13 @@ def handler(ctx, data=None, loop=None):
                     logger.info('Unable to delete files in the model directory!')
 
         # Downloading all the model files
-        minio_get_all_objects(minio_client, model_object_bucket_name, model_object_prefix_name, 'model', logger)
+        minio_get_all_objects(minio_client, model_object_bucket_name, model_object_prefix_name, '/tmp/model', logger)
 
         # Loading the models into memory and storing them as a dict referenced
         # by their file path with inertia as their values
         intermediate_models_inertias = {}
-        for the_file in os.listdir('model'):
-            file_path = os.path.join('model', the_file)
+        for the_file in os.listdir('/tmp/model'):
+            file_path = os.path.join('/tmp/model', the_file)
             try:
                 if os.path.isfile(file_path):
                     intermediate_model = joblib.load(file_path)
