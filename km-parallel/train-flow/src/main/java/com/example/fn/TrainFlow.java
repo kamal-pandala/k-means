@@ -17,16 +17,14 @@ public class TrainFlow {
     }
 
     private static final Logger log = LoggerFactory.getLogger(TrainFlow.class);
-    private static final int FUNCTION_LIMIT = 32;
+    private static final int FUNCTION_LIMIT = 12;
     private static final int N_CORES_PER_FUNCTION = 1;
 
     public TrainResponse handleRequest(TrainParams trainParams) {
-        System.out.println("Within the handle request method!");
-        log.debug("Within the handle request method!");
 
-        // Setting unique prefix for uploading model files
-        String modelObjectPrefixName = UUID.randomUUID().toString();
-        trainParams.setModelObjectPrefixName(modelObjectPrefixName);
+        // Setting unique prefix for the local name for data
+        String dataLocalName = UUID.randomUUID().toString();
+        trainParams.setDataLocalName(dataLocalName);
 
         // Configuring number of required functions and jobs per function
         int nIterationsRequired = trainParams.getEstimatorParams().getnInit();
@@ -62,6 +60,7 @@ public class TrainFlow {
                     // TODO - Failure logic
 
                     AggregateParams aggregateParams = new AggregateParams();
+                    aggregateParams.setNodeNumber(trainParams.getNodeNumber());
                     aggregateParams.setEndpoint(trainParams.getEndpoint());
                     aggregateParams.setPort(trainParams.getPort());
                     aggregateParams.setAccessKey(trainParams.getAccessKey());
@@ -69,9 +68,9 @@ public class TrainFlow {
                     aggregateParams.setSecure(trainParams.getSecure());
                     aggregateParams.setRegion(trainParams.getRegion());
                     aggregateParams.setModelObjectBucketName(trainParams.getModelObjectBucketName());
-                    aggregateParams.setModelObjectPrefixName(modelObjectPrefixName);
+                    aggregateParams.setModelObjectPrefixName(trainParams.getModelObjectPrefixName());
 
-                    return currentFlow().invokeFunction("km-parallel/train-flow/aggregate",
+                    return currentFlow().invokeFunction("km-parallel/train-flow/local-aggregate",
                             aggregateParams);
                 });
 
@@ -81,8 +80,7 @@ public class TrainFlow {
             TrainResponse trainResponse = new TrainResponse();
             trainResponse.setTrainSucess(true);
             trainResponse.setModelObjectBucketName(trainParams.getModelObjectBucketName());
-            trainResponse.setModelObjectPrefixName(modelObjectPrefixName);
-            trainResponse.setModelObjectName("final_model.pkl");
+            trainResponse.setModelObjectPrefixName(trainParams.getModelObjectPrefixName());
 
             return currentFlow().completedValue(trainResponse);
         });

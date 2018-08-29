@@ -1,4 +1,4 @@
-name: kamalpandala/km-train
+name: kamalpandala/km-predict-local-aggregate
 version: 0.0.1
 runtime: python
 entrypoint: python3 func.py

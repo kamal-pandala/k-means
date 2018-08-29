@@ -1,7 +1,7 @@
-name: kamalpandala/km-train
+name: kamalpandala/km-planner-predict
 version: 0.0.1
 runtime: python
 entrypoint: python3 func.py
-memory: 15360
+memory: 1024
 format: json
 timeout: 3600

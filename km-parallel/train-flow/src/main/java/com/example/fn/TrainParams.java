@@ -7,6 +7,9 @@ import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TrainParams implements Serializable {
+    @JsonProperty("node_number")
+    private String nodeNumber;
+
     @JsonProperty("fn_num")
     private Integer fnNum;
 
@@ -40,6 +43,9 @@ public class TrainParams implements Serializable {
     @JsonProperty("data_file_delimiter")
     private String dataFileDelimiter = ",";
 
+    @JsonProperty("data_local_name")
+    private String dataLocalName;
+
     @JsonProperty("model_object_bucket_name")
     private String modelObjectBucketName;
 
@@ -48,6 +54,16 @@ public class TrainParams implements Serializable {
 
     @JsonProperty("estimator_params")
     private EstimatorParams estimatorParams;
+
+    @JsonProperty("node_number")
+    public String getNodeNumber() {
+        return nodeNumber;
+    }
+
+    @JsonProperty("node_number")
+    public void setNodeNumber(String nodeNumber) {
+        this.nodeNumber = nodeNumber;
+    }
 
     @JsonProperty("fn_num")
     public Integer getFnNum() {
@@ -157,6 +173,16 @@ public class TrainParams implements Serializable {
     @JsonProperty("data_file_delimiter")
     public void setDataFileDelimiter(String dataFileDelimiter) {
         this.dataFileDelimiter = dataFileDelimiter;
+    }
+
+    @JsonProperty("data_local_name")
+    public String getDataLocalName() {
+        return dataLocalName;
+    }
+
+    @JsonProperty("data_local_name")
+    public void setDataLocalName(String dataLocalName) {
+        this.dataLocalName = dataLocalName;
     }
 
     @JsonProperty("model_object_bucket_name")

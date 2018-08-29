@@ -1,0 +1,6 @@
+fdk
+numpy
+minio
+pandas
+scipy
+scikit-learn

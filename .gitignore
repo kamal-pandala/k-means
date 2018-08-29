@@ -10,3 +10,5 @@ km-parallel/train-flow/target/
 *.iml
 
 km-parallel/predict-flow/\.idea/
+
+km-planner/\.idea/

@@ -7,6 +7,9 @@ import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AggregateParams implements Serializable {
+    @JsonProperty("node_number")
+    private String nodeNumber;
+
     @JsonProperty("endpoint")
     private String endpoint;
 
@@ -30,6 +33,16 @@ public class AggregateParams implements Serializable {
 
     @JsonProperty("model_object_prefix_name")
     private String modelObjectPrefixName;
+
+    @JsonProperty("node_number")
+    public String getNodeNumber() {
+        return nodeNumber;
+    }
+
+    @JsonProperty("node_number")
+    public void setNodeNumber(String nodeNumber) {
+        this.nodeNumber = nodeNumber;
+    }
 
     @JsonProperty("endpoint")
     public String getEndpoint() {
