@@ -1,7 +1,0 @@
-name: aggregate
-version: 0.0.12
-runtime: python
-entrypoint: python3 func.py
-memory: 8192
-format: json
-timeout: 3600
