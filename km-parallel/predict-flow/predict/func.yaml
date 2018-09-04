@@ -1,7 +1,7 @@
-name: predict
-version: 0.0.12
+name: kamalpandala/km-predict
+version: 0.0.1
 runtime: python
 entrypoint: python3 func.py
-memory: 8192
+memory: 15360
 format: json
 timeout: 3600
